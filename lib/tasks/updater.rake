@@ -1,7 +1,8 @@
 namespace :updater do
   desc 'Update chats and messages count'
   task update_counts: :environment do
-    puts "Update counts STARTED"
+    puts "Update counts STARTED #{Time.now}"
+    
     chats = $redis.hgetall('chats_count')
     messages = $redis.hgetall('messages_count')
 
@@ -20,6 +21,6 @@ namespace :updater do
     end
 
     $redis.del('messages_count')
-    puts "Update counts FINISHED"
+    puts 'Update counts FINISHED'
   end
 end

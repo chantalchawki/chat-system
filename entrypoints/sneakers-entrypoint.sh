@@ -6,4 +6,4 @@ if [ -f tmp/pids/server.pid ]; then
   rm tmp/pids/server.pid
 fi
 
-rake sneakers:run
+bundle exec rake sneakers:run

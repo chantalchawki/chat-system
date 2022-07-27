@@ -17,6 +17,8 @@ gem 'elasticsearch-rails'
 gem 'sneakers'
 gem 'sidekiq', '~>6.0.0'
 gem 'whenever', require: false
+gem 'lograge'
+gem 'lograge-sql'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
