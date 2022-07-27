@@ -1,0 +1,72 @@
+version: '3'
+services:
+  server:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+      - redis
+      - rabbitmq
+      - elasticsearch
+    environment:
+      - PIDFILE=/dev/null
+    volumes:
+      - .:/app
+      - gem_cache:/usr/local/bundle/gems
+      - node_modules:/app/node_modules
+
+  database:
+    image: mysql:5.6
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3308:3306"
+    volumes:
+      - db-volume:/var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=chat-system
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+
+  redis:
+    image: redis:7.0.4
+    volumes:
+      - redis-volume:/data
+
+  rabbitmq:
+    image: rabbitmq:3.10.6-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  elasticsearch:
+    image: elasticsearch:7.17.5
+    ports:
+      - "9222:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-volume:/usr/share/elasticsearch/data
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=chat-message-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+
+  worker:
+    build: .
+    entrypoint: ./entrypoints/sneakers-entrypoint.sh
+    volumes:
+      - .:/app
+      - gem_cache:/usr/local/bundle/gems
+      - node_modules:/app/node_modules
+    depends_on:
+      - server
+
+volumes:
+  db-volume:
+  redis-volume:
+  elasticsearch-volume:
+  gem_cache:
+  node_modules:
