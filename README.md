@@ -1,7 +1,14 @@
-# Running the code:
+## Running the code:
 
-1. docker-compose exec server bundle exec rake db:migrate (for the first time only)
+To run the migration (for the first time only):
+```bash
+docker-compose exec server bundle exec rake db:migrate 
+```
 
-2. docker-compose up
+To run the docker-compose.yml file:
+```bash
+docker-compose up -d
+```
 
-
+## Postman Collection:
+[postman-collection](./documentation/chat-system.postman_collection.json)
