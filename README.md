@@ -1,7 +1,7 @@
 # Running the code:
 
-* docker-compose exec server bundle exec rake db:migrate (for the first time only)
+1. docker-compose exec server bundle exec rake db:migrate (for the first time only)
 
-* docker-compose up
+2. docker-compose up
 
 
