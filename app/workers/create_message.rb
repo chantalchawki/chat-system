@@ -4,15 +4,18 @@ class CreateMessage
 
     def work(message)
       data = JSON.parse(message)
-      puts data
-      puts data['chat']['id']
-      saved_message = Message.new({ number: data['number'], body: data['body'], chat_id: data['chat']['id'] })
+      Rails.logger.info "Create message worker: #{data}"
 
-      if saved_message.save
-        new_count = $redis.incr("messages_count#{data['application']['token']}_#{data['chat']['number']}")
-        $redis.hset("messages_count", { "#{data['application']['token']}_#{data['chat']['number']}" => new_count } )
-
-        ack!
+      begin
+        saved_message = Message.new({ number: data['number'], body: data['body'], chat_id: data['chat']['id'] })
+        if saved_message.save
+          new_count = $redis.incr("messages_count#{data['application']['token']}_#{data['chat']['number']}")
+          $redis.hset("messages_count", { "#{data['application']['token']}_#{data['chat']['number']}" => new_count } )
+          ack!
+        end
+        
+      rescue => exception
+        Rails.logger.error "Error in message chat worker #{exception}"
       end
     end
 end

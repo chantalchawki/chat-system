@@ -9,7 +9,7 @@ class ApplicationsController < ActionController::API
         if @application
             render json: @application.to_json(:except => :id), status: :ok
         else 
-            render status: :not_found
+            render json: { message: 'Application not found' }, status: :not_found
         end
     end
 
@@ -23,7 +23,7 @@ class ApplicationsController < ActionController::API
     end
 
     def update
-        @application = Application.find_by(token: params[:id])    
+        @application = Application.find_by(token: params[:id])
         if @application && @application.update(application_params)
             render json: { name: @application.name, token: @application.token }, status: :ok
         else 

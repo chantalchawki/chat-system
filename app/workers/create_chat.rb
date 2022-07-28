@@ -4,12 +4,17 @@ class CreateChat
 
     def work(message)
       data = JSON.parse(message)
-      saved_chat = Chat.new({ number: data['number'], application_id: data['application']['id'] })
+      Rails.logger.info "Create chat worker: #{data}"
 
-      if saved_chat.save
-        new_count = $redis.incr("chats_count#{data['application']['token']}")
-        $redis.hset("chats_count", { data['application']['token'] => new_count } )
-        ack!
+      begin
+        saved_chat = Chat.new({ number: data['number'], application_id: data['application']['id'] })
+        if saved_chat.save
+          new_count = $redis.incr("chats_count#{data['application']['token']}")
+          $redis.hset("chats_count", { data['application']['token'] => new_count } )
+          ack!
+        end   
+      rescue => exception
+        Rails.logger.error "Error in create chat worker #{exception}"
       end
     end
 end
